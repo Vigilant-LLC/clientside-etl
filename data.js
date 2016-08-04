@@ -8,6 +8,7 @@ var Data = function(params) {
       url: '',
       type: 'GET',
       data: {},
+      dataType: 'json',
       success: _noop,
       error: _noop,
       transformRequest: _noop,
@@ -21,6 +22,7 @@ var Data = function(params) {
       url: _params.url,
       type: _params.type,
       data: _params.data,
+      dataType: _params.dataType,
       success: function(data) {
         _params.cachedData = (_params.transformResponse  === _noop) ? data : _params.transformResponse(data);
         _params.success(_params.cachedData);
@@ -40,6 +42,10 @@ var Data = function(params) {
     },
     setData: function(data) {
       if(typeof(data) === 'object') { _params.data = data; }
+      return this;
+    },
+    setDataType: function(dataType) {
+      if(typeof(dataType) === 'string') { _params.dataType = dataType; }
       return this;
     },
     setSuccess: function(success) {
