@@ -72,6 +72,10 @@ var Data = function(params) {
       }
       return this;
     },
+    clearCachedData: function() {
+      _params.cachedData = undefined;
+      return this;
+    },
     getCachedData: function() { return _params.cachedData; },
     ajax: function(params) {
       _params.transformRequest(this, params);
