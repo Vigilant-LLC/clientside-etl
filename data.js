@@ -7,10 +7,10 @@ var Data = function(params) {
       cachedData: '',
       url: '',
       type: 'GET',
-      data: {},
+      data: undefined,
       dataType: 'json',
-      success: _noop,
-      error: _noop,
+      successFunction: _noop,
+      errorFunction: _noop,
       transformRequest: _noop,
       transformResponse: _noop
     },
@@ -25,9 +25,9 @@ var Data = function(params) {
       dataType: _params.dataType,
       success: function(data) {
         _params.cachedData = (_params.transformResponse  === _noop) ? data : _params.transformResponse(data);
-        _params.success(_params.cachedData);
+        _params.successFunction(_params.cachedData);
       },
-      error: function(err) { _params.error(err); }
+      error: function(err) { _params.errorFunction(err); }
     });
   };
 
@@ -48,12 +48,16 @@ var Data = function(params) {
       if(typeof(dataType) === 'string') { _params.dataType = dataType; }
       return this;
     },
-    setSuccess: function(success) {
-      if(typeof(success) === 'function') { _params.success = success; }
+    setSuccessFunction: function(successFunction) {
+      if(typeof(successFunction) === 'function') {
+        _params.successFunction = successFunction;
+      }
       return this;
     },
-    setError: function(error) {
-      if(typeof(error) === 'function') { _params.error = error; }
+    setErrorFunction: function(errorFunction) {
+      if(typeof(errorFunction) === 'function') {
+        _params.errorFunction = errorFunction;
+      }
       return this;
     },
     setTransformRequest: function(transformRequest) {
