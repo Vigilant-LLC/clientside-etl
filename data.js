@@ -32,6 +32,7 @@ var Data = function(params) {
   };
 
   return {
+    getParams: function() { return _params; },
     setUrl: function(url) {
       if(typeof(url) === 'string') { _params.url = url; }
       return this;
