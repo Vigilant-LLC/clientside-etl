@@ -19,7 +19,7 @@ var Data = function(params) {
       url: '',
       type: 'GET',
       data: undefined,
-      dataType: 'json',
+      dataType: 'text',
       success: _noop,
       error: _noop,
       transformRequest: _noop,
