@@ -1,3 +1,14 @@
+var DATA_XHRS = {};
+var DATA_XHR_INDEX = 0;
+// gives the ability to abort all of the xhrs that have passed through
+// the Data.ajax method
+var clearAllXHRs = function() {
+  $.each(Object.keys(DATA_XHRS), function(i, key) {
+    DATA_XHRS[key].abort();
+    delete DATA_XHRS[key];
+  });
+};
+
 var Data = function(params) {
   if(!params || typeof(params) !== 'object') { params = {}; }
   var _noop = function() {};
@@ -9,8 +20,8 @@ var Data = function(params) {
       type: 'GET',
       data: undefined,
       dataType: 'json',
-      successFunction: _noop,
-      errorFunction: _noop,
+      success: _noop,
+      error: _noop,
       transformRequest: _noop,
       transformResponse: _noop
     },
@@ -18,16 +29,22 @@ var Data = function(params) {
   );
 
   var _ajax = function() {
-    $.ajax({
+    var dataXHRIndex = DATA_XHR_INDEX++;
+    DATA_XHRS[dataXHRIndex] = $.ajax({
       url: _params.url,
       type: _params.type,
       data: _params.data,
       dataType: _params.dataType,
+      dataXHRIndex: dataXHRIndex,
       success: function(data) {
         _params.cachedData = (_params.transformResponse  === _noop) ? data : _params.transformResponse(data);
-        _params.successFunction(_params.cachedData);
+        _params.success(_params.cachedData);
+        delete DATA_XHRS[dataXHRIndex];
       },
-      error: function(err) { _params.errorFunction(err); }
+      error: function(err) {
+        _params.error(err);
+        delete DATA_XHRS[dataXHRIndex];
+      }
     });
   };
 
@@ -49,15 +66,15 @@ var Data = function(params) {
       if(typeof(dataType) === 'string') { _params.dataType = dataType; }
       return this;
     },
-    setSuccessFunction: function(successFunction) {
-      if(typeof(successFunction) === 'function') {
-        _params.successFunction = successFunction;
+    setSuccess: function(success) {
+      if(typeof(success) === 'function') {
+        _params.success = success;
       }
       return this;
     },
-    setErrorFunction: function(errorFunction) {
-      if(typeof(errorFunction) === 'function') {
-        _params.errorFunction = errorFunction;
+    setError: function(error) {
+      if(typeof(error) === 'function') {
+        _params.error = error;
       }
       return this;
     },
